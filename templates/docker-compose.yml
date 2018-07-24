@@ -1,0 +1,53 @@
+version: '2'
+volumes:
+  nextcloud-app/var/lib/mysql:
+    external: true
+    driver: rancher-nfs
+  nextcloud-data:
+    external: true
+    driver: rancher-nfs
+  nextcloud-app/var/www/html:
+    external: true
+    driver: rancher-nfs
+  nextcloud-app/etc/nginx/conf.d:
+    external: true
+    driver: rancher-nfs
+services:
+  app:
+    image: nextcloud:fpm
+    stdin_open: true
+    volumes:
+    - nextcloud-app/var/www/html:/var/www/html
+    - nextcloud-data:/var/www/html/data
+    tty: true
+    links:
+    - db:database
+    labels:
+      io.rancher.container.pull_image: always
+  web:
+    image: nginx
+    stdin_open: true
+    volumes:
+    - nextcloud-app/var/www/html:/var/www/html
+    - nextcloud-data:/var/www/html/data
+    - nextcloud-app/etc/nginx/conf.d:/etc/nginx/conf.d
+    tty: true
+    links:
+    - app:app
+    ports:
+    - 999:80/tcp
+    labels:
+      io.rancher.container.pull_image: always
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: F8)+7Xpvi6)Tt*Vp
+      MYSQL_PASSWORD: '>V6)9aWT8dY}g)ga'
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+    stdin_open: true
+    volumes:
+    - nextcloud-app/var/lib/mysql:/var/lib/mysql
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
