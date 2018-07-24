@@ -11,6 +11,7 @@ ENV NAME="gluster-client" \
     container=docker \
     SRV_ADDRESS="" \
     SRV_SHARE="";
+COPY connect.sh /
 
 LABEL name="$REPO/$NAME" \
       version="$VERSION" \
@@ -31,5 +32,7 @@ RUN dnf --setopt=tsflags=nodocs -y install wget nfs-utils attr iputils iproute \
   && dnf clean all
 RUN mkdir -p /data \
   && mkdir -p /var/log/core;
+  && mv /connect.sh /usr/sbin/connect.sh
+  && chmod 500 /usr/sbin/connect.sh
 
-CMD ["/sbin/mount_glusterfs $SRV_ADDRESS:/$SRV_SHARE /data"]
+CMD ["/usr/sbin/init"]
