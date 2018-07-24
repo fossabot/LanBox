@@ -1,6 +1,6 @@
 name: LanBox server
 description: Enterprise File Sync and Share
-version: 0.0.1
+version: 0.0.2
 category: File Synchronisation
 maintainer: Mikhail Chusavitin (chusavitin@lanit.ru)
 license: # The license
