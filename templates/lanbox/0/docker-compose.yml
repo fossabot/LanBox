@@ -1,9 +1,5 @@
 version: '2'
-volumes:
-  nextcloud-app/var/lib/mysql:
-  nextcloud-data:
-  nextcloud-app/var/www/html:
-  nextcloud-app/etc/nginx/conf.d:
+
 services:
   app:
     image: nextcloud:fpm
@@ -19,10 +15,10 @@ services:
   web:
     image: nginx
     stdin_open: true
-    volumes_from:
-    - app
     volumes:
-    - /etc/nginx/conf.d
+    - /var/www/html
+    - /var/www/html/data
+    - /etc/nginx/conf.d:ro
     tty: true
     links:
     - app:app
