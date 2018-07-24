@@ -1,0 +1,50 @@
+version: '2'
+catalog:
+
+  name: LanBox
+  version: 0.0.1
+  description: Enterprise File Sync and Share
+  questions:
+    - variable: EXTERNAL_PORT
+      label: Port
+      default: 80
+      required: true
+      type: int
+    - variable: MYSQL_ROOT_PASSWORD
+      label: MySQL root password
+      required: true
+      type: password
+    - variable: MYSQL_DATABASE
+      default: lanbox
+      label: MySQL Database
+      required: true
+      type: string
+    - variable: MYSQL_USER
+      default: lanbox
+      label: MySQL User
+      required: true
+      type: string
+    - variable: MYSQL_PASSWORD
+      label: MySQL Pass
+      required: true
+      type: password
+
+services:
+  app:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 2000
+      port: 9000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      reinitializing_timeout: 60000
+  web:
+    scale: 1
+    start_on_create: true
+  db:
+    scale: 1
+    start_on_create: true
