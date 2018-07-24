@@ -26,13 +26,13 @@ LABEL name="$REPO/$NAME" \
       io.openshift.tags="gluster,glusterfs,glusterfs-client";
 
 RUN sed -i "s/LANG/\#LANG/g" /etc/locale.conf
-RUN dnf --setopt=tsflags=nodocs -y update
+RUN dnf --setopt=tsflags=nodocs -y update 
 RUN dnf --setopt=tsflags=nodocs -y install wget nfs-utils attr iputils iproute \
   && dnf install -y glusterfs-fuse \
-  && dnf clean all
+  && dnf clean all ;
 RUN mkdir -p /data \
-  && mkdir -p /var/log/core;
-  && mv /connect.sh /usr/sbin/connect.sh
-  && chmod 500 /usr/sbin/connect.sh
+  && mkdir -p /var/log/core \
+  && mv /connect.sh /usr/sbin/connect.sh \
+  && chmod 500 /usr/sbin/connect.sh ;
 
 CMD ["/usr/sbin/init"]
