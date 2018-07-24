@@ -9,8 +9,8 @@ ENV NAME="gluster-client" \
     ARCH=x86_64 \
     REPO="$FGC" \
     container=docker \
-    SRV_ADDRESS \
-    SRV_SHARE \
+    SRV_ADDRESS="" \
+    SRV_SHARE="";
 
 LABEL name="$REPO/$NAME" \
       version="$VERSION" \
@@ -22,17 +22,14 @@ LABEL name="$REPO/$NAME" \
       io.k8s.display-name="Gluster 3.10 client based on Fedora" \
       io.k8s.description="Gluster Client Image is based on Fedora Image which is used to mount a glusterfs volume." \
       description="Gluster Client Image is based on Fedora Image which is used to mount a glusterfs volume." \
-      io.openshift.tags="gluster,glusterfs,glusterfs-client"
+      io.openshift.tags="gluster,glusterfs,glusterfs-client";
 
 RUN sed -i "s/LANG/\#LANG/g" /etc/locale.conf
-  && dnf --setopt=tsflags=nodocs -y update \
-  && dnf --setopt=tsflags=nodocs -y install wget nfs-utils attr iputils iproute \
+RUN dnf --setopt=tsflags=nodocs -y update
+RUN dnf --setopt=tsflags=nodocs -y install wget nfs-utils attr iputils iproute \
   && dnf install -y glusterfs-fuse \
-  && dnf clean all \
-  && mv /client-connect.sh /usr/sbin/client-connect.sh \
-  && chmod 500 /usr/sbin/client-connect.sh \
-  && ln -s /usr/sbin/client-connect.sh /usr/sbin/connect.sh \
-  && mkdir -p /data \
+  && dnf clean all
+RUN mkdir -p /data \
   && mkdir -p /var/log/core;
 
 CMD ["/sbin/mount_glusterfs $SRV_ADDRESS:/$SRV_SHARE /data"]
