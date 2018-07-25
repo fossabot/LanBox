@@ -100,8 +100,8 @@ RUN set -ex; \
     "; \
     apt-get update; \
     apt-get install -y --no-install-recommends $fetchDeps;
-RUN
-    curl -fsSL -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2"; \
+
+RUN curl -fsSL -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2"; \
     curl -fsSL -o nextcloud.tar.bz2.asc "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2.asc"; \
     export GNUPGHOME="$(mktemp -d)"; \
 # gpg key from https://nextcloud.com/nextcloud.asc
@@ -118,7 +118,7 @@ RUN
 RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps; \
     rm -rf /var/lib/apt/lists/* ;
 
-COPY *.sh /
+COPY entrypoint.sh /
 COPY config/* /usr/src/nextcloud/config/
 COPY redis.config.php /usr/src/nextcloud/config/redis.config.php
 
