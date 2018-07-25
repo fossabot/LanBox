@@ -46,7 +46,6 @@ services:
     restart: always
     volumes:
       - app:/var/www/html
-    entrypoint: /cron.sh
     depends_on:
       - db
       - redis
