@@ -4,11 +4,9 @@ RUN apt-get update;
 
 # entrypoint.sh and cron.sh dependencies
 RUN set -ex; \
-    apt-get install -y --no-install-recommends rsync bzip2 busybox-static;\
-    rm -rf /var/lib/apt/lists/*;
-
+    apt-get install -y --no-install-recommends rsync bzip2 busybox-static;
 # install the PHP extensions we need
-# see https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html
+# see https://docs.nextcloud.com/server/13/admin_manual/installation/source_installation.html
 RUN set -ex; \
     savedAptMark="$(apt-mark showmanual)"; \
     apt-get install -y --no-install-recommends \
@@ -57,9 +55,7 @@ RUN set -ex; \
         | cut -d: -f1 \
         | sort -u \
         | xargs -rt apt-mark manual; \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    rm -rf /var/lib/apt/lists/*
-
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 # set recommended PHP.ini settings
 # see https://docs.nextcloud.com/server/12/admin_manual/configuration_server/server_tuning.html#enable-php-opcache
 RUN { \
