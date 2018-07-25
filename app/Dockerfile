@@ -99,12 +99,10 @@ RUN set -ex; \
         dirmngr \
     "; \
     apt-get update; \
-    apt-get install -y --no-install-recommends $fetchDeps; \
-    \
-    curl -fsSL -o nextcloud.tar.bz2 \
-        "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2"; \
-    curl -fsSL -o nextcloud.tar.bz2.asc \
-        "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2.asc"; \
+    apt-get install -y --no-install-recommends $fetchDeps;
+RUN
+    curl -fsSL -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2"; \
+    curl -fsSL -o nextcloud.tar.bz2.asc "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2.asc"; \
     export GNUPGHOME="$(mktemp -d)"; \
 # gpg key from https://nextcloud.com/nextcloud.asc
     gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 28806A878AE423A28372792ED75899B9A724937A; \
@@ -115,10 +113,10 @@ RUN set -ex; \
     rm -rf /usr/src/nextcloud/updater; \
     mkdir -p /usr/src/nextcloud/data; \
     mkdir -p /usr/src/nextcloud/custom_apps; \
-    chmod +x /usr/src/nextcloud/occ; \
-    \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps; \
-    rm -rf /var/lib/apt/lists/*
+    chmod +x /usr/src/nextcloud/occ;
+
+RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps; \
+    rm -rf /var/lib/apt/lists/* ;
 
 COPY *.sh /
 COPY config/* /usr/src/nextcloud/config/
