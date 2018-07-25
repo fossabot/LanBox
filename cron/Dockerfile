@@ -1,3 +1,4 @@
+# DO NOT EDIT: created by update.sh from Dockerfile-debian.template
 FROM php:7.1-fpm-stretch
 
 # entrypoint.sh and cron.sh dependencies
@@ -10,6 +11,9 @@ RUN set -ex; \
         busybox-static \
     ; \
     rm -rf /var/lib/apt/lists/*; \
+    \
+    mkdir -p /var/spool/cron/crontabs; \
+    echo '*/15 * * * * php -f /var/www/html/cron.php' > /var/spool/cron/crontabs/www-data
 
 # install the PHP extensions we need
 # see https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html

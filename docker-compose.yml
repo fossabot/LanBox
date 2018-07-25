@@ -37,13 +37,12 @@ services:
       - app:/var/www/html:ro
       - data:/var/www/html/data:ro
     environment:
-      - VIRTUAL_HOST=
-      - LETSENCRYPT_HOST=
-      - LETSENCRYPT_EMAIL=
+      - SRV_ADDRESS="app"
+      - SRV_PORT="9000"
     depends_on:
       - app
   cron:
-    build: ./app
+    build: ./cron
     restart: always
     volumes:
       - app:/var/www/html
