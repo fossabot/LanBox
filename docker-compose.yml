@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   db:
@@ -8,30 +8,33 @@ services:
     volumes:
       - db:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=
-    env_file:
-      - db.env
+      - MYSQL_ROOT_PASSWORD=123qweASD
+      - MYSQL_PASSWORD=123qweASD
+      - MYSQL_DATABASE=lanbox
+      - MYSQL_USER=lanbox
 
   redis:
     image: redis
     restart: always
 
   app:
-    build: ./app
+    image: mchus/lanbox:app
     restart: always
     volumes:
       - app:/var/www/html
       - data:/var/www/html/data
     environment:
       - MYSQL_HOST=db
-    env_file:
-      - db.env
+      - MYSQL_ROOT_PASSWORD=123qweASD
+      - MYSQL_PASSWORD=123qweASD
+      - MYSQL_DATABASE=lanbox
+      - MYSQL_USER=lanbox
     depends_on:
       - db
       - redis
 
   static:
-    build: ./static
+    image: mchus/lanbox:static
     restart: always
     volumes:
       - app:/var/www/html:ro
@@ -42,7 +45,7 @@ services:
     depends_on:
       - app
   cron:
-    build: ./cron
+    image: mchus/lanbox:cron
     restart: always
     volumes:
       - app:/var/www/html

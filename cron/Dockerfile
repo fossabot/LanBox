@@ -1,27 +1,16 @@
-# DO NOT EDIT: created by update.sh from Dockerfile-debian.template
 FROM php:7.1-fpm-stretch
+
+RUN apt-get update;
 
 # entrypoint.sh and cron.sh dependencies
 RUN set -ex; \
-    \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        rsync \
-        bzip2 \
-        busybox-static \
-    ; \
-    rm -rf /var/lib/apt/lists/*; \
-    \
+    apt-get install -y --no-install-recommends rsync bzip2 busybox-static; \
     mkdir -p /var/spool/cron/crontabs; \
-    echo '*/15 * * * * php -f /var/www/html/cron.php' > /var/spool/cron/crontabs/www-data
-
+    echo '*/15 * * * * php -f /var/www/html/cron.php' > /var/spool/cron/crontabs/www-data;
 # install the PHP extensions we need
-# see https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html
+# see https://docs.nextcloud.com/server/13/admin_manual/installation/source_installation.html
 RUN set -ex; \
-    \
     savedAptMark="$(apt-mark showmanual)"; \
-    \
-    apt-get update; \
     apt-get install -y --no-install-recommends \
         libcurl4-openssl-dev \
         libfreetype6-dev \
@@ -34,7 +23,6 @@ RUN set -ex; \
         libpq-dev \
         libxml2-dev \
     ; \
-    \
     debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
     docker-php-ext-configure gd --with-freetype-dir=/usr --with-png-dir=/usr --with-jpeg-dir=/usr; \
     docker-php-ext-configure ldap --with-libdir="lib/$debMultiarch"; \
@@ -50,18 +38,15 @@ RUN set -ex; \
         pdo_pgsql \
         zip \
     ; \
-    \
 # pecl will claim success even if one install fails, so we need to perform each install separately
     pecl install APCu-5.1.12; \
     pecl install memcached-3.0.4; \
     pecl install redis-3.1.6; \
-    \
     docker-php-ext-enable \
         apcu \
         memcached \
         redis \
     ; \
-    \
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
     apt-mark auto '.*' > /dev/null; \
     apt-mark manual $savedAptMark; \
@@ -72,10 +57,7 @@ RUN set -ex; \
         | cut -d: -f1 \
         | sort -u \
         | xargs -rt apt-mark manual; \
-    \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    rm -rf /var/lib/apt/lists/*
-
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 # set recommended PHP.ini settings
 # see https://docs.nextcloud.com/server/12/admin_manual/configuration_server/server_tuning.html#enable-php-opcache
 RUN { \
@@ -87,13 +69,11 @@ RUN { \
         echo 'opcache.save_comments=1'; \
         echo 'opcache.revalidate_freq=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini; \
-    \
     mkdir /var/www/data; \
     chown -R www-data:root /var/www; \
     chmod -R g=u /var/www
 
 VOLUME /var/www/html
-
 
 ENV NEXTCLOUD_VERSION 13.0.5
 
@@ -102,15 +82,11 @@ RUN set -ex; \
         gnupg \
         dirmngr \
     "; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends $fetchDeps; \
-    \
-    curl -fsSL -o nextcloud.tar.bz2 \
-        "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2"; \
-    curl -fsSL -o nextcloud.tar.bz2.asc \
-        "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2.asc"; \
+    apt-get install -y --no-install-recommends $fetchDeps;
+
+RUN curl -fsSL -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2"; \
+    curl -fsSL -o nextcloud.tar.bz2.asc "https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.tar.bz2.asc"; \
     export GNUPGHOME="$(mktemp -d)"; \
-# gpg key from https://nextcloud.com/nextcloud.asc
     gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 28806A878AE423A28372792ED75899B9A724937A; \
     gpg --batch --verify nextcloud.tar.bz2.asc nextcloud.tar.bz2; \
     tar -xjf nextcloud.tar.bz2 -C /usr/src/; \
@@ -119,10 +95,10 @@ RUN set -ex; \
     rm -rf /usr/src/nextcloud/updater; \
     mkdir -p /usr/src/nextcloud/data; \
     mkdir -p /usr/src/nextcloud/custom_apps; \
-    chmod +x /usr/src/nextcloud/occ; \
-    \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps; \
-    rm -rf /var/lib/apt/lists/*
+    chmod +x /usr/src/nextcloud/occ;
+
+RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps; \
+    rm -rf /var/lib/apt/lists/* ;
 
 COPY *.sh /
 COPY config/* /usr/src/nextcloud/config/
