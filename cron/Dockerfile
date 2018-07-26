@@ -1,4 +1,4 @@
-FROM mchus\lanbox:app
+FROM mchus/lanbox:app
 
 
 RUN set -ex; \
