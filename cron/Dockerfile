@@ -104,5 +104,4 @@ COPY *.sh /
 COPY config/* /usr/src/nextcloud/config/
 COPY redis.config.php /usr/src/nextcloud/config/redis.config.php
 
-ENTRYPOINT ["/cron.sh"]
-CMD ["php-fpm"]
+CMD ["exec busybox crond -f -l 0 -L /dev/stdout"]
