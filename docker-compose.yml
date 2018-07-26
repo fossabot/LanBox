@@ -18,7 +18,7 @@ services:
     restart: always
 
   app:
-    image: mchus/lanbox:app
+    image: mchus/lanbox-app
     restart: always
     volumes:
       - app:/var/www/html
@@ -34,7 +34,7 @@ services:
       - redis
 
   static:
-    image: mchus/lanbox:static
+    image: mchus/lanbox-static
     restart: always
     volumes:
       - app:/var/www/html:ro
@@ -45,7 +45,7 @@ services:
     depends_on:
       - app
   cron:
-    image: mchus/lanbox:cron
+    image: mchus/lanbox-cron
     restart: always
     volumes:
       - app:/var/www/html
