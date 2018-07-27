@@ -35,6 +35,7 @@ services:
     links:
     - db:db
     - redis:redis
+    pull: true
 
   cron:
     image: mchus/lanbox-cron
@@ -47,6 +48,7 @@ services:
     links:
     - db:db
     - redis:redis
+    pull: true
 
   static:
     image: mchus/lanbox-static
@@ -62,7 +64,8 @@ services:
     links:
     - app:app
     ports:
-    - 80:9999/tcp
+    - 9999:80/tcp
+    pull: true
 
 volumes:
   db:
