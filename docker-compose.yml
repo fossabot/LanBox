@@ -32,18 +32,10 @@ services:
     depends_on:
       - db
       - redis
+    links:
+    - db:db
+    - redis:redis
 
-  static:
-    image: mchus/lanbox-static
-    restart: always
-    volumes:
-      - app:/var/www/html:ro
-      - data:/var/www/html/data:ro
-    environment:
-      - SRV_ADDRESS="app"
-      - SRV_PORT="9000"
-    depends_on:
-      - app
   cron:
     image: mchus/lanbox-cron
     restart: always
@@ -52,6 +44,25 @@ services:
     depends_on:
       - db
       - redis
+    links:
+    - db:db
+    - redis:redis
+
+  static:
+    image: mchus/lanbox-static
+    restart: always
+    volumes:
+      - app:/var/www/html
+      - data:/var/www/html/data
+    environment:
+      - SRV_ADDRESS="app"
+      - SRV_PORT="9000"
+    depends_on:
+      - app
+    links:
+    - app:app
+    ports:
+    - 80:9999/tcp
 
 volumes:
   db:
