@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --controller deployment
+    kompose.version: 1.13.0 (84fa826)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app
+  name: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: app
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_DATABASE
+          value: lanbox
+        - name: MYSQL_HOST
+          value: db
+        - name: MYSQL_PASSWORD
+          value: 123qweASD
+        - name: MYSQL_ROOT_PASSWORD
+          value: 123qweASD
+        - name: MYSQL_USER
+          value: lanbox
+        image: mchus/lanbox-app
+        name: app
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: app
+        - mountPath: /var/www/html/data
+          name: data
+      restartPolicy: Always
+      volumes:
+      - name: app
+        persistentVolumeClaim:
+          claimName: app
+      - name: data
+        persistentVolumeClaim:
+          claimName: data
+status: {}
