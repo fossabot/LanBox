@@ -1,8 +1,12 @@
-FROM mchus/lanbox-app
+FROM nextcloud:apache
 
-RUN set -ex; \
-    mkdir -p /var/spool/cron/crontabs; \
-    echo '*/15 * * * * php -f /var/www/html/cron.php' > /var/spool/cron/crontabs/www-data;
-COPY        cron.sh /
-RUN         chmod +x /cron.sh
-ENTRYPOINT  ["/cron.sh"]
+RUN apt-get update && apt-get install -y \
+    supervisor \
+  && rm -rf /var/lib/apt/lists/* \
+  && mkdir /var/log/supervisord /var/run/supervisord
+
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+
+ENV NEXTCLOUD_UPDATE=1
+
+CMD ["/usr/bin/supervisord"]
